@@ -1,4 +1,4 @@
-stremlit
+streamlit
 plotly 
 seaborn 
 altair 
