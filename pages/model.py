@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import RandomOverSampler
-import math
+import math 
 
 
 
@@ -33,8 +33,8 @@ if "button_main" not in st.session_state:
 if "button_sec" not in st.session_state:
     st.session_state["button_sec"]=False
 
-if "button_ann" not in st.session_state:
-    st.session_state["button_ann"]=False
+if "button_model" not in st.session_state:
+    st.session_state["button_model"]=False
 
 if st.button("Click when done selecting"):
     st.session_state["button_main"]= not st.session_state["button_main"]
@@ -88,25 +88,44 @@ if st.session_state["button_sec"]:
     
 
 if st.session_state["button_main"] and st.session_state["button_sec"]:
-    if st.button("Train ANN"):
-        st.session_state["button_ann"]=not st.session_state["button_ann"]
+    if st.button("Train Model"):
+        st.session_state["button_model"]=not st.session_state["button_model"]
 
 
 
-if st.session_state["button_ann"]:
-    ann_1=tf.keras.models.Sequential(
-    [tf.keras.layers.Dense(units=6, activation="relu", input_dim=len(X_res[1,:])),
-    tf.keras.layers.Dense(units=6, activation="relu"),
-    tf.keras.layers.Dense(units=1, activation="sigmoid")])
-
-    ann_1.compile(optimizer="adam",loss="binary_crossentropy",metrics=['accuracy'])
-    #ann_1.summary()
-    ann_1.fit(X_res, y_res,batch_size=32,epochs=500)
-    y_pred=ann_1.predict(X_test)
-    y_pred=[0 if i<0.5 else 1 for i in y_pred]
-    score=accuracy_score(y_pred, y_test)
-    score=str(math.floor(score*100))+"%"
+if st.session_state["button_model"]:
     
-    st.metric("Accuracy over Test data is ", score)
+    st.text("6 models are available")
+
+    model_option=st.selectbox(
+        "Select model to train over the preprocessed data",
+        ("ANN", "Random Forest", "Decision Tree", "KNN", "SVM", "Logistic Regression"))
+    
+    mode_cont=st.button("Click when done selecting model")
+
+    if mode_cont:
+        if model_option=="ANN":
+            ann_1=tf.keras.models.Sequential(
+                [tf.keras.layers.Dense(units=6, activation="relu", input_dim=len(X_res[1,:])),
+                tf.keras.layers.Dense(units=6, activation="relu"),
+                tf.keras.layers.Dense(units=1, activation="sigmoid")])
+
+            ann_1.compile(optimizer="adam",loss="binary_crossentropy",metrics=['accuracy'])
+        
+            ann_1.fit(X_res, y_res,batch_size=32,epochs=500)
+            y_pred=ann_1.predict(X_test)
+            y_pred=[0 if i<0.5 else 1 for i in y_pred]
+            score=accuracy_score(y_pred, y_test)
+            score=str(math.floor(score*100))+"%"
+    
+            st.metric("Accuracy over Test data", score)
+        
+        else:
+            st.text("Model yet to be developed")
+    
+    
+
+    
+
 
             
