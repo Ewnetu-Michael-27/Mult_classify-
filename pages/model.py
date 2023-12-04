@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import RandomOverSampler
+import math
 
 
 
@@ -104,7 +105,8 @@ if st.session_state["button_ann"]:
     y_pred=ann_1.predict(X_test)
     y_pred=[0 if i<0.5 else 1 for i in y_pred]
     score=accuracy_score(y_pred, y_test)
+    score=str(math.floor(score*100))+"%"
     
-    st.metric("Accuracy over Test data", score)
+    st.metric("Accuracy over Test data is ", score)
 
             
