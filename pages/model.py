@@ -113,12 +113,19 @@ if st.session_state["button_model"]:
             ann_1.compile(optimizer="adam",loss="binary_crossentropy",metrics=['accuracy'])
         
             ann_1.fit(X_res, y_res,batch_size=32,epochs=500)
-            y_pred=ann_1.predict(X_test)
-            y_pred=[0 if i<0.5 else 1 for i in y_pred]
-            score=accuracy_score(y_pred, y_test)
-            score=str(math.floor(score*100))+"%"
-    
-            st.metric("Accuracy over Test data", score)
+          
+            y_pred_test=ann_1.predict(X_test)
+            y_pred_test=[0 if i<0.5 else 1 for i in y_pred_test]
+            score_test=accuracy_score(y_pred_test, y_test)
+            score_test=str(math.floor(score_test*100))+"%"
+          
+            y_pred_train=ann_1.predict(X_res)
+            y_pred_train=[0 if i<0.5 else 1 for i in y_pred_train]
+            score_train=accuracy_score(y_pred_train, y_res)
+            score_train=str(math.floor(score_train*100))+"%"
+
+            st.metric("Accuracy over Training data", score_train)
+            st.metric("Accuracy over Test data", score_test)
         
         else:
             st.text("Model yet to be developed")
