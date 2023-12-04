@@ -9,6 +9,7 @@ from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import RandomOverSampler
 
 
+
 st.title("Applying Models")
 
 
@@ -23,10 +24,21 @@ list_features=st.multiselect("Pick Features",
                              ["age","sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal"]
                              )
 
-button_main=st.button("Click when done selecting")
+#button_main=st.button("Click when done selecting")
 
+if "button_main" not in st.session_state:
+    st.session_state["button_main"]=False
 
-if button_main:
+if "button_sec" not in st.session_state:
+    st.session_state["button_sec"]=False
+
+if "button_ann" not in st.session_state:
+    st.session_state["button_ann"]=False
+
+if st.button("Click when done selecting"):
+    st.session_state["button_main"]= not st.session_state["button_main"]
+
+if st.session_state["button_main"]:
     #Slecting continous and categorical variable 
     def choose_cont(x, st):
         list_cont=[]
@@ -46,40 +58,53 @@ if button_main:
     cat=choose_cont(list_features, "cat")
 
     st.markdown("Additional Preprocessing of Data")
+
+
+if st.session_state["button_main"]:
+     if st.button("Continue Preprocessing"):
+         st.session_state["button_sec"]= not st.session_state["button_sec"]
+
+if st.session_state["button_sec"]:
+    X_cont=df[cont].to_numpy()
+    my_scaler = StandardScaler()
+    my_scaler.fit(X_cont)
+    X_cont_sc=my_scaler.transform(X_cont)
+
+    X_cat=df[cat].to_numpy()
+    X_new=np.hstack((X_cont_sc, X_cat))
+    output=["num"]
+    y=df[output].astype("category").to_numpy()
+
+
+    X_train,X_test,y_train,y_test = train_test_split(X_new,y,test_size=0.2,random_state=42)
+
+
+    samp = {0: len(y_train[y_train == 0]), 1: len(y_train[y_train == 0])}
+    sampler=RandomOverSampler(sampling_strategy=samp, random_state=42)
+    X_res, y_res=sampler.fit_resample(X_train, y_train)
+
+    st.markdown("Time to train model")
     
-    button_sec=st.button("Click to apply Standardscalter and Resampling of the Data")
 
-    if button_sec:
-        st.markdown("continued")
-        X_cont=df[cont].to_numpy()
-        my_scaler = StandardScaler()
-        my_scaler.fit(X_cont)
-        X_cont_sc=my_scaler.transform(X_cont)
-
-        X_cat=df[cat].to_numpy()
-        X_new=np.hstack((X_cont_sc, X_cat))
-
-        X_train,X_test,y_train,y_test = train_test_split(X_new,y,test_size=0.2,random_state=42)
+if st.session_state["button_main"] and st.session_state["button_sec"]:
+    if st.button("Train ANN"):
+        st.session_state["button_ann"]=not st.session_state["button_ann"]
 
 
-        samp = {0: len(y_train[y_train == 0]), 1: len(y_train[y_train == 0])}
-        sampler=RandomOverSampler(sampling_strategy=samp, random_state=42)
-        X_res, y_res=sampler.fit_resample(X_train, y_train)
 
-        st.markdown("Time to train model")
-        button_ann=st.button("Train ANN")
+if st.session_state["button_ann"]:
+    ann_1=tf.keras.models.Sequential(
+    [tf.keras.layers.Dense(units=6, activation="relu", input_dim=len(X_res[1,:])),
+    tf.keras.layers.Dense(units=6, activation="relu"),
+    tf.keras.layers.Dense(units=1, activation="sigmoid")])
 
-        if button_ann:
-            ann_1=tf.keras.models.Sequential(
-            [tf.keras.layers.Dense(units=6, activation="relu", input_dim=len(X_res[1,:])),
-            tf.keras.layers.Dense(units=6, activation="relu"),
-            tf.keras.layers.Dense(units=1, activation="sigmoid")])
-
-            ann_1.compile(optimizer="adam",loss="binary_crossentropy",metrics=['accuracy'])
-            #ann_1.summary()
-            ann_1.fit(X_res, y_res,batch_size=32,epochs=500)
-            y_pred=ann_1.predict(X_test)
-            y_pred=[0 if i<0.5 else 1 for i in y_pred]
-            score=accuracy_score(y_pred, y_test)
+    ann_1.compile(optimizer="adam",loss="binary_crossentropy",metrics=['accuracy'])
+    #ann_1.summary()
+    ann_1.fit(X_res, y_res,batch_size=32,epochs=500)
+    y_pred=ann_1.predict(X_test)
+    y_pred=[0 if i<0.5 else 1 for i in y_pred]
+    score=accuracy_score(y_pred, y_test)
     
-            st.metric("Accuracy over Test data", score)
+    st.metric("Accuracy over Test data", score)
+
+            
