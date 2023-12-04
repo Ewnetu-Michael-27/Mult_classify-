@@ -50,6 +50,7 @@ if button_main:
     button_sec=st.button("Click to apply Standardscalter and Resampling of the Data")
 
     if button_sec:
+        st.markdown("continued")
         X_cont=df[cont].to_numpy()
         my_scaler = StandardScaler()
         my_scaler.fit(X_cont)
