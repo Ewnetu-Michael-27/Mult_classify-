@@ -5,3 +5,4 @@ altair
 pandas 
 scikit-learn 
 tensorflow
+imblearn
