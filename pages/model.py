@@ -125,6 +125,7 @@ if st.session_state["button_model"]:
             score_train=str(math.floor(score_train*100))+"%"
 
             st.metric("Accuracy over Training data", score_train)
+            st.text("And")
             st.metric("Accuracy over Test data", score_test)
         
         else:
