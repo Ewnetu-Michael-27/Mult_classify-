@@ -1,4 +1,3 @@
-import streamlit as st 
 import streamlit as st
 import pandas as pd 
 import matplotlib.pyplot as plt 
@@ -6,42 +5,80 @@ import numpy as np
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-import imblearn
-
-
+from sklearn.preprocessing import StandardScaler
+from imblearn.over_sampling import RandomOverSampler
 
 
 st.title("Applying Models")
 
 
-
 df=pd.read_csv("df_heart_clean_2.csv")
 
-pre=["age","sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal"]
-output=["num"]
+
+st.markdown("Based on the feature analysis from the previous page, select features to include in the model")
+st.markdown("Leave as it is to select all features")
+
+list_features=st.multiselect("Pick Features", 
+                             ["age","sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal"],
+                             ["age","sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal"]
+                             )
+
+button_main=st.button("Click when done selecting")
 
 
-X=df[pre].to_numpy()
-y=df[output].astype("category").to_numpy()
+if button_main:
+    #Slecting continous and categorical variable 
+    def choose_cont(x, st):
+        list_cont=[]
+        if st=="cont":
+            for i in x:
+                if i in ["age","trestbps","chol","thalach","oldpeak"]:
+                    list_cont.append(i)
+        else:
+            for i in x:
+                if i in ["sex","cp","fbs","restecg","exang","slope","ca","thal"]:
+                    list_cont.append(i)
 
-X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)
 
-
-button=st.button("Train ANN")
-
-if button:
-    ann_1=tf.keras.models.Sequential(
-    [tf.keras.layers.Dense(units=6, activation="relu", input_dim=len(X_train[1,:])),
-     tf.keras.layers.Dense(units=6, activation="relu"),
-     tf.keras.layers.Dense(units=1, activation="sigmoid")
-        
-    ]
-    )
-    ann_1.compile(optimizer="adam",loss="binary_crossentropy",metrics=['accuracy'])
-    ann_1.summary()
-    ann_1.fit(X_train, y_train,batch_size=32,epochs=500)
-    y_pred=ann_1.predict(X_test)
-    y_pred=[0 if i<0.5 else 1 for i in y_pred]
-    score=accuracy_score(y_pred, y_test)
+        return list_cont
     
-    st.metric("Accuracy over Test data", score)
+    cont=choose_cont(list_features, "cont")
+    cat=choose_cont(list_features, "cat")
+
+    st.markdown("Additional Preprocessing of Data")
+    
+    button_sec=st.button("Click to apply Standardscalter and Resampling of the Data")
+
+    if button_sec:
+        X_cont=df[cont].to_numpy()
+        my_scaler = StandardScaler()
+        my_scaler.fit(X_cont)
+        X_cont_sc=my_scaler.transform(X_cont)
+
+        X_cat=df[cat].to_numpy()
+        X_new=np.hstack((X_cont_sc, X_cat))
+
+        X_train,X_test,y_train,y_test = train_test_split(X_new,y,test_size=0.2,random_state=42)
+
+
+        samp = {0: len(y_train[y_train == 0]), 1: len(y_train[y_train == 0])}
+        sampler=RandomOverSampler(sampling_strategy=samp, random_state=42)
+        X_res, y_res=sampler.fit_resample(X_train, y_train)
+
+        st.markdown("Time to train model")
+        button_ann=st.button("Train ANN")
+
+        if button_ann:
+            ann_1=tf.keras.models.Sequential(
+            [tf.keras.layers.Dense(units=6, activation="relu", input_dim=len(X_res[1,:])),
+            tf.keras.layers.Dense(units=6, activation="relu"),
+            tf.keras.layers.Dense(units=1, activation="sigmoid")])
+
+            ann_1.compile(optimizer="adam",loss="binary_crossentropy",metrics=['accuracy'])
+            #ann_1.summary()
+            ann_1.fit(X_res, y_res,batch_size=32,epochs=500)
+            y_pred=ann_1.predict(X_test)
+            y_pred=[0 if i<0.5 else 1 for i in y_pred]
+            score=accuracy_score(y_pred, y_test)
+    
+            st.metric("Accuracy over Test data", score)
