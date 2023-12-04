@@ -1,5 +1,10 @@
-import streamlit as st 
+import streamlit as st
 import pandas as pd 
+import matplotlib.pyplot as plt 
+import numpy as np
+import tensorflow as tf
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
 
 st.set_page_config(
@@ -11,19 +16,38 @@ st.title("Applying Several Classification Models to Predict the Presence of CAD"
 st.sidebar.success("Select a Page Above")
 
 df=pd.read_csv("df_heart_clean_2.csv")
-df_new=pd.read_csv("df_heart_clean_2.csv")
+
+pre=["age","sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal"]
+output=["num"]
 
 
+X=df[pre].to_numpy()
+y=df[output].astype("category").to_numpy()
 
-list_val=st.multiselect("Pick varaibles",
-                              ["age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", 
-                               "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num"] ,
-                               ["age","sex","cp","thalach","exang","ca","thal"])
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)
 
-button=st.button("Try!")
+
+button=st.button("Train ANN")
+
 if button:
-    df_new=df[list_val]
+    ann_1=tf.keras.models.Sequential(
+    [tf.keras.layers.Dense(units=6, activation="relu", input_dim=len(X_train[1,:])),
+     tf.keras.layers.Dense(units=6, activation="relu"),
+     tf.keras.layers.Dense(units=1, activation="sigmoid")
+        
+    ]
+    )
+    ann_1.compile(optimizer="adam",loss="binary_crossentropy",metrics=['accuracy'])
+    ann_1.summary()
+    ann_1.fit(X_train, y_train,batch_size=32,epochs=500)
+    y_pred=ann_1.predict(X_test)
+    y_pred=[0 if i<0.5 else 1 for i in y_pred]
+    score=accuracy_score(y_pred, y_test)
     
-button_2=st.button("Export")
-if button_2:
-    df_new.to_csv("df_new.csv")
+    st.metric("Accuracy over Test data", score)
+
+
+
+
+
+
