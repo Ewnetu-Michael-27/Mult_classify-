@@ -1,0 +1,7 @@
+stremlit
+plotly 
+seaborn 
+altair 
+pandas 
+scikit-learn 
+tensorflow
