@@ -8,6 +8,10 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import RandomOverSampler
 import math 
+import altair as alt 
+import plotly.graph_objects as go 
+import PIL  
+import plotly.express as px 
 
 
 
@@ -36,6 +40,9 @@ if "button_sec" not in st.session_state:
 if "button_model" not in st.session_state:
     st.session_state["button_model"]=False
 
+
+
+
 if st.button("Click when done selecting"):
     st.session_state["button_main"]= not st.session_state["button_main"]
 
@@ -55,14 +62,49 @@ if st.session_state["button_main"]:
 
         return list_cont
     
+    ########################################### Continous, Categorical, and output 
     cont=choose_cont(list_features, "cont")
     cat=choose_cont(list_features, "cat")
+    output=["num"]
 
     st.markdown("Additional Preprocessing of Data")
+    st.write("The first process is to apply Standard Scalar to regularize the data. Second process is to fix the imbalnce of the data.")
 
+    X_cont=df[cont]
+    y=df["num"]
+    y=df[output].astype("category").to_numpy()
+
+
+    col=cont+["num"]
+    for_fig=pd.DataFrame((np.concatenate((X_cont, y), axis=1)), columns=col)
+    x_str=col[0]
+    y_str=col[1]
+
+    tab_1, tab_2=st.tabs(["Before Standard Scalr Process", "Before Balancing the Data"])
+
+    fig_1=alt.Chart(for_fig).mark_circle().encode(
+        x=x_str,
+        y=y_str, 
+        color="num", 
+        tooltip=["age", "chol", "num"]
+        ).interactive()
+    
+    labels=["0 (Absence)", "1 (Presence)"]
+    val=np.unique(y, return_counts=True)
+    values=[val[1][0], val[1][1]]
+
+    fig_2=go.Figure(data=[go.Pie(labels=labels, values=values)])
+
+    with tab_1:
+        st.altair_chart(fig_1, use_container_width=True)
+    with tab_2:
+        st.plotly_chart(fig_2)
+        
+
+################################################################################################## To Preprocessing Stage 
 
 if st.session_state["button_main"]:
-     if st.button("Continue Preprocessing"):
+     if st.button("Click to Preprocess the data"):
          st.session_state["button_sec"]= not st.session_state["button_sec"]
 
 if st.session_state["button_sec"]:
@@ -73,9 +115,6 @@ if st.session_state["button_sec"]:
 
     X_cat=df[cat].to_numpy()
     X_new=np.hstack((X_cont_sc, X_cat))
-    output=["num"]
-    y=df[output].astype("category").to_numpy()
-
 
     X_train,X_test,y_train,y_test = train_test_split(X_new,y,test_size=0.2,random_state=42)
 
@@ -84,7 +123,44 @@ if st.session_state["button_sec"]:
     sampler=RandomOverSampler(sampling_strategy=samp, random_state=42)
     X_res, y_res=sampler.fit_resample(X_train, y_train)
 
+    tab_3, tab_4=st.tabs(["After Standard Scalr Process", "After Balancing the Data by Sampling"])
+
+
+    col=cont+["num"]
+    for_fig=pd.DataFrame((np.concatenate((X_cont_sc, y), axis=1)), columns=col)
+
+    fig_3=alt.Chart(for_fig).mark_circle().encode(
+        x=x_str,
+        y=y_str, 
+        color="num", 
+        tooltip=["age", "chol", "num"]
+        ).interactive()
+    
+    labels=["0 (Absence)", "1 (Presence)"]
+    val=np.unique(y_res, return_counts=True)
+    values=[val[1][0], val[1][1]]
+
+    fig_4=go.Figure(data=[go.Pie(labels=labels, values=values)])
+
+    with tab_3:
+        st.altair_chart(fig_3, use_container_width=True)
+    with tab_4:
+        st.plotly_chart(fig_4)
+
+
+
+
+
+    
+
     st.markdown("Time to train model")
+
+
+
+
+
+
+
     
 
 if st.session_state["button_main"] and st.session_state["button_sec"]:
@@ -95,7 +171,7 @@ if st.session_state["button_main"] and st.session_state["button_sec"]:
 
 if st.session_state["button_model"]:
     
-    st.text("6 models are available")
+    st.write("6 models are available")
 
     model_option=st.selectbox(
         "Select model to train over the preprocessed data",
@@ -125,11 +201,10 @@ if st.session_state["button_model"]:
             score_train=str(math.floor(score_train*100))+"%"
 
             st.metric("Accuracy over Training data", score_train)
-            st.text("And")
             st.metric("Accuracy over Test data", score_test)
         
         else:
-            st.text("Model yet to be developed")
+            st.write("Model yet to be developed")
     
     
 
