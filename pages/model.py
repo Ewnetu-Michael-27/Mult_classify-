@@ -625,7 +625,7 @@ if st.session_state["button_predict"]:
     st.write("Input values below. **Make sure to only insert values for the features selected above**. If the particular feature is not selected, just leave it")
 
     keys=cont+cat
-    values=[3129]*len(keys)
+    values=[272727]*len(keys)
 
     key_val_pairs=zip(keys, values)
     dict_val=dict(key_val_pairs)
@@ -721,7 +721,8 @@ if st.session_state["button_predict"]:
     dict_val["thal"]=thal           
 
 
-
+    st.text("")
+    st.write("Summary of selected values")
     st.write(dict_val)
 
     p_values=[(list(dict_val))]
