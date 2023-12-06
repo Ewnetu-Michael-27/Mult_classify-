@@ -10,7 +10,7 @@ from imblearn.over_sampling import RandomOverSampler
 import math 
 import altair as alt 
 import plotly.graph_objects as go 
-import PIL  
+from PIL import Image
 import plotly.express as px 
 from sklearn.metrics import confusion_matrix
 import plotly.figure_factory as ff
@@ -222,7 +222,8 @@ st.text("")
 if st.session_state["button_model_select"]:
     if model_option=="ANN":
         st.write("You have choosen Artificial Neural Network from TensorFlow")
-        st.image("ANN.PNG")
+        Image=Image.open("ANN.PNG")
+        st.image(Image)
         st.write("Write Optimizer below. Options are (adam, rmsprop, ftrl, adadelta, adafactor, sgd, nadam, lion) **adam** is recommended")
         optimizer_input=st.text_input("Optimizer Choice ", "adam")
         st.write("choice of optimizer", optimizer_input)
@@ -232,7 +233,9 @@ if st.session_state["button_model_select"]:
         st.write("Your choice of Epoch is ", no_epoch)
     elif model_option=="Random Forest":
         st.write("You have choosen Random Forest Model from Sklearn")
-        st.image("RF.PNG")
+        #st.image("RF.PNG")
+        Image=Image.open("RF.PNG")
+        st.image(Image)
         st.write("Input below n_estimators, which is the number of trees in the forest. **Below 10** is recommended")
         no_n_est=int(st.number_input("Insert n_estimators and press Enter."))
         st.write("The choice of n_estimators is ", no_n_est)
@@ -242,13 +245,17 @@ if st.session_state["button_model_select"]:
         st.write("Choice of criterion is ", crit)
     elif model_option=="KNN":
         st.write("You have selected KNN model for classification.")
-        st.image("KNN.PNG")
+        #st.image("KNN.PNG")
+        Image=Image.open("KNN.PNG")
+        st.image(Image)
         st.write("Input below number of neighbors to use.")
         no_neigh=int(st.number_input("Insert number of neighbors"))
         st.write("Your choice of value is", no_neigh)
     elif model_option=="SVM":
         st.write("You have choosen Support Vector Machine: SVM from sklearn")
-        st.image("SVM.PNG")
+        #st.image("SVM.PNG")
+        Image=Image.open("SVM.PNG")
+        st.image(Image)
         st.write("Write below which kernel to use. Options are linear, poly, sigmoid, precomputed")
         kernel=st.text_input("Write the kernel below and press enter", "linear")
         st.write("You have selected", kernel)
@@ -258,7 +265,9 @@ if st.session_state["button_model_select"]:
         st.write("Your choice of C is ", c_reg)
     elif model_option=="Logistic Regression":
         st.write("You have choosen Logistic Regression from sklearn")
-        st.image("LR.PNG")
+        #st.image("LR.PNG")
+        Image=Image.open("LR.PNG")
+        st.image(Image)
         st.write("write choice of solver below. Options are liblinear, lbfgs, sag, saga, newton-cholesky. liblinear and lbfgs are highly recommended")
         solver=st.text_input("Write choice of solver and press enter", "liblinear")
         st.write("Your choice of solver is", solver)
