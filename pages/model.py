@@ -17,6 +17,26 @@ import plotly.express as px
 
 st.title("Applying Models")
 
+############################## Session states 
+
+if "button_main" not in st.session_state:
+    st.session_state["button_main"]=False
+
+if "button_sec" not in st.session_state:
+    st.session_state["button_sec"]=False
+
+if "button_model" not in st.session_state:
+    st.session_state["button_model"]=False
+
+if "button_model_select" not in st.session_state:
+    st.session_state["button_model_select"]=False
+
+if "button_model_train" not in st.session_state:
+    st.session_state["button_model_train"]=False
+
+if "button_predict" not in st.session_state:
+    st.session_state["button_predict"]=False
+
 
 df=pd.read_csv("df_heart_clean_2.csv")
 
@@ -29,30 +49,18 @@ list_features=st.multiselect("Pick Features",
                              ["age","sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal"]
                              )
 
-st.write("You Selected:", list_features)
+st.write("The Following Features are being selected for the model:", list_features)
 
 
 
-if "button_main" not in st.session_state:
-    st.session_state["button_main"]=False
-
-if "button_sec" not in st.session_state:
-    st.session_state["button_sec"]=False
-
-if "button_model" not in st.session_state:
-    st.session_state["button_model"]=False
-
-if "button_ann" not in st.session_state:
-    st.session_state["button_ann"]=False
-
-if "button_ann_2" not in st.session_state:
-    st.session_state["button_ann_2"]=False
-
-
-
-
-if st.button("Click when done selecting"):
+if st.button("Click when selection is finished and ready to continue"):
     st.session_state["button_main"]= not st.session_state["button_main"]
+
+
+st.text("")
+st.markdown("***")
+st.text("")
+
 
 if st.session_state["button_main"]:
     #Slecting continous and categorical variable 
@@ -121,6 +129,10 @@ if st.session_state["button_main"]:
      if st.button("Click to Preprocess the data"):
          st.session_state["button_sec"]= not st.session_state["button_sec"]
 
+st.text("")
+st.markdown("***")
+st.text("")
+
 if st.session_state["button_sec"]:
     st.write("Data is preprocessed. See the graphs below")
     X_cont=df[cont].to_numpy()
@@ -172,17 +184,15 @@ if st.session_state["button_sec"]:
 
 
 
-
-
-
-
     
-
+################## click button model 
 if st.session_state["button_main"] and st.session_state["button_sec"]:
     if st.button("Train Model"):
         st.session_state["button_model"]=not st.session_state["button_model"]
 
-
+st.text("")
+st.markdown("***")
+st.text("")
 
 if st.session_state["button_model"]:
     
@@ -192,39 +202,87 @@ if st.session_state["button_model"]:
         "Select model to train over the preprocessed data",
         ("ANN", "Random Forest", "Decision Tree", "KNN", "SVM", "Logistic Regression"))
     
-    mode_cont=st.button("Click when done selecting model")
+#mode_cont=st.button("Click when done selecting model")
 
-    if mode_cont:
-        if model_option=="ANN":
-            ann_1=tf.keras.models.Sequential(
+
+if st.session_state["button_main"] and st.session_state["button_sec"] and st.session_state["button_model"]:
+    if st.button("Click to choose parameter for the choosen model"):
+        st.session_state["button_model_select"]= not st.session_state["button_model_select"]
+
+st.text("")
+st.markdown("***")
+st.text("")
+
+if st.session_state["button_model_select"]:
+    if model_option=="ANN":
+        optimizer_input=st.text_input("Optimizer Choice", "adam")
+        st.write("choise of optimizer", optimizer_input)
+        no_epoch=int(st.number_input("Insert number of Epoch for training and press Enter"))
+        st.write("Your choise of Epoch is ", no_epoch)
+    elif model_option=="Random Forest":
+        optimizer_input=st.text_input("Optimizer Choiiiiiiiiiiice", "adam")
+        st.write("choise of optimizer", optimizer_input)
+        no_epoch=int(st.number_input("Insert number of Epoch for training"))
+        st.write("", no_epoch)
+
+
+
+st.text("")
+st.markdown("***")
+st.text("")
+
+######################################################################## Training model 
+if st.session_state["button_main"] and st.session_state["button_sec"] and st.session_state["button_model"] and st.session_state["button_model_select"]:
+    if st.button("Click to train model with given parameters"):
+        st.session_state["button_model_train"]=not st.session_state["button_model_train"]
+
+
+if st.session_state["button_model_train"]:
+    st.markdown("Instruction:")
+    st.markdown("**TO CHANGE MODEL** click the above button and close the training window. Then, choose another one from the selection box!")
+    st.markdown(''':black[To change parameters and re-train model: **click the above button first**, then change parameters, then click it.]''')
+    
+    st.text("")
+    st.markdown(''':red[TRAINING MODEL WAIT....!]''')
+    
+    if model_option=="ANN":
+        ann_1=tf.keras.models.Sequential(
                 [tf.keras.layers.Dense(units=6, activation="relu", input_dim=len(X_res[1,:])),
                 tf.keras.layers.Dense(units=6, activation="relu"),
                 tf.keras.layers.Dense(units=1, activation="sigmoid")])
 
-            ann_1.compile(optimizer="adam",loss="binary_crossentropy",metrics=['accuracy'])
+        ann_1.compile(optimizer=optimizer_input,loss="binary_crossentropy",metrics=['accuracy'])
 
-            st.write("Visalize Network")
-
-
-
-        
-            ann_1.fit(X_res, y_res,batch_size=32,epochs=500)
+       
+        ann_1.fit(X_res, y_res,batch_size=32,epochs=no_epoch)
           
-            y_pred_test=ann_1.predict(X_test)
-            y_pred_test=[0 if i<0.5 else 1 for i in y_pred_test]
-            score_test=accuracy_score(y_pred_test, y_test)
-            score_test=str(math.floor(score_test*100))+"%"
+        y_pred_test=ann_1.predict(X_test)
+        y_pred_test=[0 if i<0.5 else 1 for i in y_pred_test]
+        score_test=accuracy_score(y_pred_test, y_test)
+        score_test=str(math.floor(score_test*100))+"%"
           
-            y_pred_train=ann_1.predict(X_res)
-            y_pred_train=[0 if i<0.5 else 1 for i in y_pred_train]
-            score_train=accuracy_score(y_pred_train, y_res)
-            score_train=str(math.floor(score_train*100))+"%"
+        y_pred_train=ann_1.predict(X_res)
+        y_pred_train=[0 if i<0.5 else 1 for i in y_pred_train]
+        score_train=accuracy_score(y_pred_train, y_res)
+        score_train=str(math.floor(score_train*100))+"%"
 
-            st.metric("Accuracy over Training data", score_train)
-            st.metric("Accuracy over Test data", score_test)
+        st.metric("Accuracy over Training data", score_train)
+        st.metric("Accuracy over Test data", score_test)
         
-        else:
-            st.write("Model yet to be developed")
+    elif model_option=="Random Forest":
+        st.write("RF to be developed")
+        
+    elif model_option=="Decision Tree":
+        st.write("DT to be developed")
+
+    elif model_option=="KNN":
+        st.write("KNN yet to be developed")
+
+    elif model_option=="SVM":
+        st.write("SVM yet to be developed")
+        
+    else:
+        st.write("Logistic Regression yet to be developed")
     
     
 
