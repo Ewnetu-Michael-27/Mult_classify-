@@ -722,11 +722,6 @@ if st.session_state["button_predict"]:
 
     st.write(dict_val)
 
-    #def transformer(dict_v):
-
-
-    #predicting values now
-
     p_values=[(list(dict_val))]
 
     def predict_output(model, list_v, classifier):
