@@ -612,13 +612,136 @@ if st.session_state["button_model_train"]:
 
 
 
-"""
 st.write("Based on the trained model, input values below to predict presence or absence of CAD")
 
-def show_pre(x):
-    list_col=cont+cat
-    if x=="T":
-     """   
+if st.session_state["button_main"] and st.session_state["button_sec"] and st.session_state["button_model"] and st.session_state["button_model_select"] and st.session_state["button_model_train"]:
+    if st.button("Click to predict from values or to roll back page below"):
+        st.session_state["button_predict"]=not st.session_state["button_predict"]
+
+if st.session_state["button_predict"]:
+
+    st.write("Input values below. **Make sure to only insert values for the features selected above**. If the particular feature is not selected, just leave it")
+
+    keys=cont+cat
+    values=[3129]*len(keys)
+
+    key_val_pairs=zip(keys, values)
+    dict_val=dict(key_val_pairs)
+
+    st.write("Input value for age")
+    age=st.slider("Input age", 0,130,25)
+    st.write("The selected age value is ",age)
+    dict_val["age"]=age
+
+    st.text("")
+
+    st.write("Select value for sex 1 for male and 0 for female")
+    sex=float(st.selectbox("Select sex.", 
+                     ("1", "0")))
+    st.write("The selected age value is ",sex)
+    dict_val["sex"]=sex
+
+    st.text("")
+
+    st.write("Input value for cp. 1 for Typical Angina, 2 Atypical Angina, 3 Non-Anginal Pain, and 4 asymptomatic")
+    cp=float(st.selectbox("Select CP.", 
+                     ("1", "2", "3", "4")))
+    st.write("The selected cp value is ",cp)
+    dict_val["cp"]=cp
+
+    st.text("")
+
+    st.write("Input value for Resting Blood Pressure in mm of Hg at admission to Hospital")
+    trestbps=st.slider("Input Trestbps", 60.0,240.0,140.0)
+    st.write("The selected trestbps value is ",trestbps)
+    dict_val["trestbps"]=trestbps
+
+    st.text("")
+    st.write("Input value for Serum Cholestrol in mg/dl")
+    chol=st.slider("Input Chol", 50.0,690.0,250.0)
+    st.write("The selected chol value is ",chol)
+    dict_val["chol"]=chol
+
+    st.text("")
+
+    st.write("Select value for Fasting Bloog sugar >120 1 is True and 0 is False")
+    fbs=float(st.selectbox("Select fbs.", 
+                     ("1", "0")))
+    st.write("The selected fbs value is ",fbs)
+    dict_val["fbs"]=fbs
+    st.text("")
+
+    st.markdown("Select value for Resting Electrocardiographic Results. 0 Normal, 1 Having ST-T wave abnormality, 2 showing probable or definite left ventricular hypertrophy")
+    restecg=float(st.selectbox("Select restecg.", 
+                     ("0", "1", "2")))
+    st.write("The selected restecg value is ",restecg)
+    dict_val["restecg"]=restecg 
+
+    st.text("")
+    st.write("Input value for thalach. Maximum Heart Rate achieved")
+    thalach=st.slider("Input Thala,ch", 40.0,220.0,140.0)
+    st.write("The selected thalach value is ",thalach)
+    dict_val["thalach"]=thalach 
+
+    st.text("")
+
+    st.write("Input value for excercise induced angina. 1 for yes and 0 for no")
+    exang=float(st.selectbox("Select exang.", 
+                     ("0", "1")))
+    st.write("The selected exang value is ",exang)
+    dict_val["exang"]=exang 
+
+    st.text("")
+    st.write("Input value for oldpeak. ST Depression induced by excercise relative to rest")
+    oldpeak=st.slider("Input Thala,ch", 0.0,9.0,3.0)
+    st.write("The selected oldpeak value is ",oldpeak)
+    dict_val["oldpeak"]=oldpeak
+
+    st.text("")
+    st.write("Input value for for the slope of peak exercise ST segment. 1 upsloping, 2 Flat, 3 Down sloping")
+    slope=float(st.selectbox("Select slope.", 
+                     ("1", "2", "3")))
+    st.write("The selected slope value is ",slope)
+    dict_val["slope"]=slope
+
+    st.text("")
+    st.write("Input value for number of major vessels colored by fluroscopy")
+    ca=float(st.selectbox("Select ca.", 
+                     ("0", "1", "2", "3")))
+    st.write("The selected ca value is ",ca)
+    dict_val["ca"]=ca 
+
+    st.text("")
+    st.write("Input value for Thallium scintigraphy, 3 normal 6 Fixed defect 7 Reversable defect")
+    thal=float(st.selectbox("Select thal.", 
+                     ("3", "5", "6", "7")))
+    st.write("The selected thal value is ",thal)
+    dict_val["thal"]=thal           
+
+
+
+    st.write(dict_val)
+
+    #def transformer(dict_v):
+
+
+    #predicting values now
+
+    p_values=[(list(dict_val))]
+
+    def predict_output(model, list_v, classifier):
+        list_v=np.array(list_v)
+        if classifier=="ANN":
+            p_a=model.predict(list_v)[0][0]
+            return "CAD is Present" if p_a>0.5 else "CAD Is Absent"
+        else:
+            return model.predict(list_v)[0]
+        
+    st.write("The Prediction value is")
+    
+
+            
+
 
 
     
