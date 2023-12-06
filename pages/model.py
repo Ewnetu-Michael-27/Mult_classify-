@@ -29,7 +29,9 @@ list_features=st.multiselect("Pick Features",
                              ["age","sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal"]
                              )
 
-#button_main=st.button("Click when done selecting")
+st.write("You Selected:", list_features)
+
+
 
 if "button_main" not in st.session_state:
     st.session_state["button_main"]=False
@@ -39,6 +41,12 @@ if "button_sec" not in st.session_state:
 
 if "button_model" not in st.session_state:
     st.session_state["button_model"]=False
+
+if "button_ann" not in st.session_state:
+    st.session_state["button_ann"]=False
+
+if "button_ann_2" not in st.session_state:
+    st.session_state["button_ann_2"]=False
 
 
 
@@ -62,9 +70,13 @@ if st.session_state["button_main"]:
 
         return list_cont
     
+    
+    
     ########################################### Continous, Categorical, and output 
     cont=choose_cont(list_features, "cont")
+    
     cat=choose_cont(list_features, "cat")
+    
     output=["num"]
 
     st.markdown("Additional Preprocessing of Data")
@@ -78,7 +90,9 @@ if st.session_state["button_main"]:
     col=cont+["num"]
     for_fig=pd.DataFrame((np.concatenate((X_cont, y), axis=1)), columns=col)
     x_str=col[0]
+    
     y_str=col[1]
+    
 
     tab_1, tab_2=st.tabs(["Before Standard Scalr Process", "Before Balancing the Data"])
 
@@ -86,7 +100,7 @@ if st.session_state["button_main"]:
         x=x_str,
         y=y_str, 
         color="num", 
-        tooltip=["age", "chol", "num"]
+        tooltip=[x_str, y_str, "num"]
         ).interactive()
     
     labels=["0 (Absence)", "1 (Presence)"]
@@ -134,7 +148,7 @@ if st.session_state["button_sec"]:
         x=x_str,
         y=y_str, 
         color="num", 
-        tooltip=["age", "chol", "num"]
+        tooltip=[x_str, y_str, "num"]
         ).interactive()
     
     labels=["0 (Absence)", "1 (Presence)"]
@@ -188,6 +202,11 @@ if st.session_state["button_model"]:
                 tf.keras.layers.Dense(units=1, activation="sigmoid")])
 
             ann_1.compile(optimizer="adam",loss="binary_crossentropy",metrics=['accuracy'])
+
+            st.write("Visalize Network")
+
+
+
         
             ann_1.fit(X_res, y_res,batch_size=32,epochs=500)
           
