@@ -222,8 +222,8 @@ st.text("")
 if st.session_state["button_model_select"]:
     if model_option=="ANN":
         st.write("You have choosen Artificial Neural Network from TensorFlow")
-        Image=Image.open("ANN.PNG")
-        st.image(Image)
+        image=Image.open("ANN.PNG")
+        st.image(image)
         st.write("Write Optimizer below. Options are (adam, rmsprop, ftrl, adadelta, adafactor, sgd, nadam, lion) **adam** is recommended")
         optimizer_input=st.text_input("Optimizer Choice ", "adam")
         st.write("choice of optimizer", optimizer_input)
