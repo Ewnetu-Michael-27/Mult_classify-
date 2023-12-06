@@ -12,6 +12,12 @@ import altair as alt
 import plotly.graph_objects as go 
 import PIL  
 import plotly.express as px 
+from sklearn.metrics import confusion_matrix
+import plotly.figure_factory as ff
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import neighbors 
+from sklearn import svm 
+from sklearn.linear_model import LogisticRegression 
 
 
 
@@ -42,7 +48,7 @@ df=pd.read_csv("df_heart_clean_2.csv")
 
 
 st.markdown("Based on the feature analysis from the previous page, select features to include in the model")
-st.markdown("Leave as it is to select all features")
+st.markdown("You can leave as it is and click the button below to select all features")
 
 list_features=st.multiselect("Pick Features", 
                              ["age","sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal"],
@@ -53,7 +59,7 @@ st.write("The Following Features are being selected for the model:", list_featur
 
 
 
-if st.button("Click when selection is finished and ready to continue"):
+if st.button("Click when selection is finished or to roll back page below"):
     st.session_state["button_main"]= not st.session_state["button_main"]
 
 
@@ -126,7 +132,7 @@ if st.session_state["button_main"]:
 ################################################################################################## To Preprocessing Stage 
 
 if st.session_state["button_main"]:
-     if st.button("Click to Preprocess the data"):
+     if st.button("Click to Preprocess the data or to roll back page below"):
          st.session_state["button_sec"]= not st.session_state["button_sec"]
 
 st.text("")
@@ -187,7 +193,7 @@ if st.session_state["button_sec"]:
     
 ################## click button model 
 if st.session_state["button_main"] and st.session_state["button_sec"]:
-    if st.button("Train Model"):
+    if st.button("Click to train model or to roll back page below"):
         st.session_state["button_model"]=not st.session_state["button_model"]
 
 st.text("")
@@ -196,17 +202,17 @@ st.text("")
 
 if st.session_state["button_model"]:
     
-    st.write("6 models are available")
+    st.write("5 models are available")
 
     model_option=st.selectbox(
         "Select model to train over the preprocessed data",
-        ("ANN", "Random Forest", "Decision Tree", "KNN", "SVM", "Logistic Regression"))
+        ("ANN", "Random Forest", "KNN", "SVM", "Logistic Regression"))
     
 #mode_cont=st.button("Click when done selecting model")
 
 
 if st.session_state["button_main"] and st.session_state["button_sec"] and st.session_state["button_model"]:
-    if st.button("Click to choose parameter for the choosen model"):
+    if st.button("Click to choose parameter for the choosen model or to roll back page below"):
         st.session_state["button_model_select"]= not st.session_state["button_model_select"]
 
 st.text("")
@@ -215,15 +221,51 @@ st.text("")
 
 if st.session_state["button_model_select"]:
     if model_option=="ANN":
-        optimizer_input=st.text_input("Optimizer Choice", "adam")
-        st.write("choise of optimizer", optimizer_input)
+        st.write("You have choosen Artificial Neural Network from TensorFlow")
+        st.image("ANN.PNG")
+        st.write("Write Optimizer below. Options are (adam, rmsprop, ftrl, adadelta, adafactor, sgd, nadam, lion) **adam** is recommended")
+        optimizer_input=st.text_input("Optimizer Choice ", "adam")
+        st.write("choice of optimizer", optimizer_input)
+        st.text("")
+        st.write("Insert number of Epochs below. **500** is recommended")
         no_epoch=int(st.number_input("Insert number of Epoch for training and press Enter"))
-        st.write("Your choise of Epoch is ", no_epoch)
+        st.write("Your choice of Epoch is ", no_epoch)
     elif model_option=="Random Forest":
-        optimizer_input=st.text_input("Optimizer Choiiiiiiiiiiice", "adam")
-        st.write("choise of optimizer", optimizer_input)
-        no_epoch=int(st.number_input("Insert number of Epoch for training"))
-        st.write("", no_epoch)
+        st.write("You have choosen Random Forest Model from Sklearn")
+        st.image("RF.PNG")
+        st.write("Input below n_estimators, which is the number of trees in the forest. **Below 10** is recommended")
+        no_n_est=int(st.number_input("Insert n_estimators and press Enter."))
+        st.write("The choice of n_estimators is ", no_n_est)
+        st.text("")
+        st.write("Write below choice of criterion to measure quality of split. Options are (gini, entropy, log_loss ). **gini** is recommended!")
+        crit=st.text_input("Choice of criterion", "gini")
+        st.write("Choice of criterion is ", crit)
+    elif model_option=="KNN":
+        st.write("You have selected KNN model for classification.")
+        st.image("KNN.PNG")
+        st.write("Input below number of neighbors to use.")
+        no_neigh=int(st.number_input("Insert number of neighbors"))
+        st.write("Your choice of value is", no_neigh)
+    elif model_option=="SVM":
+        st.write("You have choosen Support Vector Machine: SVM from sklearn")
+        st.image("SVM.PNG")
+        st.write("Write below which kernel to use. Options are linear, poly, sigmoid, precomputed")
+        kernel=st.text_input("Write the kernel below and press enter", "linear")
+        st.write("You have selected", kernel)
+        st.text("")
+        st.write("Choose Regularization parameter below. 1 is recommended")
+        c_reg=st.number_input("Insert C and press enter")
+        st.write("Your choice of C is ", c_reg)
+    elif model_option=="Logistic Regression":
+        st.write("You have choosen Logistic Regression from sklearn")
+        st.image("LR.PNG")
+        st.write("write choice of solver below. Options are liblinear, lbfgs, sag, saga, newton-cholesky. liblinear and lbfgs are highly recommended")
+        solver=st.text_input("Write choice of solver and press enter", "liblinear")
+        st.write("Your choice of solver is", solver)
+        st.text("")
+        st.write("Choose maximum number of iteration below. 100 is recommended")
+        max_iter=int(st.number_input("Input choice of maximum number of iteration and press enter"))
+        st.write("Your choice of value is", max_iter)
 
 
 
@@ -233,7 +275,7 @@ st.text("")
 
 ######################################################################## Training model 
 if st.session_state["button_main"] and st.session_state["button_sec"] and st.session_state["button_model"] and st.session_state["button_model_select"]:
-    if st.button("Click to train model with given parameters"):
+    if st.button("Click to train model with given parameters or to roll back page below"):
         st.session_state["button_model_train"]=not st.session_state["button_model_train"]
 
 
@@ -268,25 +310,308 @@ if st.session_state["button_model_train"]:
 
         st.metric("Accuracy over Training data", score_train)
         st.metric("Accuracy over Test data", score_test)
+
+
+        confusion_matrix_1=confusion_matrix(y_test, y_pred_test)
+
+        z = np.flip(confusion_matrix_1,0)
+        x = ['Predict 1', 'Prdict 0']
+        y =  ['True 0', 'True 1']
+
+        # change each element of z to type string for annotations
+        z_text = [[str(x) for x in y] for y in z]
+
+        # set up figure 
+        fig = ff.create_annotated_heatmap(z, y=y, x=x, annotation_text=z_text, colorscale='Viridis')
+
+        # add title
+        fig.update_layout(title_text='<i><b>Confusion matrix</b></i>',
+                  #xaxis = dict(title='x'),
+                  #yaxis = dict(title='x')
+                 )
+
+        # add custom xaxis title
+        fig.add_annotation(dict(font=dict(color="black",size=14),
+                        x=0.5,
+                        y=-0.15,
+                        showarrow=False,
+                        text="Predicted value",
+                        xref="paper",
+                        yref="paper"))
+
+        # add custom yaxis title
+        fig.add_annotation(dict(font=dict(color="black",size=14),
+                        x=-0.35,
+                        y=0.5,
+                        showarrow=False,
+                        text="Real value",
+                        textangle=-90,
+                        xref="paper",
+                        yref="paper"))
+
+        # adjust margins to make room for yaxis title
+        fig.update_layout(margin=dict(t=50, l=200))
+
+        # add colorbar
+        fig['data'][0]['showscale'] = True
+        st.plotly_chart(fig)
         
     elif model_option=="Random Forest":
-        st.write("RF to be developed")
-        
-    elif model_option=="Decision Tree":
-        st.write("DT to be developed")
+        Classifier_RF=RandomForestClassifier(n_estimators=no_n_est, criterion=crit)
+        Classifier_RF.fit(X_res,y_res)
+
+        y_pred_test=Classifier_RF.predict(X_test)
+        score_test=accuracy_score(y_pred_test, y_test)
+        score_test=str(math.floor(score_test*100))+"%"
+          
+        y_pred_train=Classifier_RF.predict(X_res)
+        score_train=accuracy_score(y_pred_train, y_res)
+        score_train=str(math.floor(score_train*100))+"%"
+
+        st.metric("Accuracy over Training data", score_train)
+        st.metric("Accuracy over Test data", score_test)
+
+        confusion_matrix_2=confusion_matrix(y_test, y_pred_test)
+
+        z = np.flip(confusion_matrix_2,0)
+        x = ['Predict 1', 'Prdict 0']
+        y =  ['True 0', 'True 1']
+
+        # change each element of z to type string for annotations
+        z_text = [[str(x) for x in y] for y in z]
+
+        # set up figure 
+        fig_2 = ff.create_annotated_heatmap(z, y=y, x=x, annotation_text=z_text, colorscale='Viridis')
+
+        # add title
+        fig_2.update_layout(title_text='<i><b>Confusion matrix on The Test Data</b></i>',
+                  #xaxis = dict(title='x'),
+                  #yaxis = dict(title='x')
+                 )
+
+        # add custom xaxis title
+        fig_2.add_annotation(dict(font=dict(color="black",size=14),
+                        x=0.5,
+                        y=-0.15,
+                        showarrow=False,
+                        text="Predicted value",
+                        xref="paper",
+                        yref="paper"))
+
+        # add custom yaxis title
+        fig_2.add_annotation(dict(font=dict(color="black",size=14),
+                        x=-0.35,
+                        y=0.5,
+                        showarrow=False,
+                        text="Real value",
+                        textangle=-90,
+                        xref="paper",
+                        yref="paper"))
+
+        # adjust margins to make room for yaxis title
+        fig_2.update_layout(margin=dict(t=50, l=200))
+
+        # add colorbar
+        fig_2['data'][0]['showscale'] = True
+        st.plotly_chart(fig_2)
 
     elif model_option=="KNN":
-        st.write("KNN yet to be developed")
+        
+        classifier_KNN=neighbors.KNeighborsClassifier(no_neigh)
+        classifier_KNN.fit(X_res, y_res)
+
+        y_pred_test=classifier_KNN.predict(X_test)
+        score_test=accuracy_score(y_pred_test, y_test)
+        score_test=str(math.floor(score_test*100))+"%"
+          
+        y_pred_train=classifier_KNN.predict(X_res)
+        score_train=accuracy_score(y_pred_train, y_res)
+        score_train=str(math.floor(score_train*100))+"%"
+
+        st.metric("Accuracy over Training data", score_train)
+        st.metric("Accuracy over Test data", score_test)
+
+        confusion_matrix_3=confusion_matrix(y_test, y_pred_test)
+
+        z = np.flip(confusion_matrix_3,0)
+        x = ['Predict 1', 'Prdict 0']
+        y =  ['True 0', 'True 1']
+
+        # change each element of z to type string for annotations
+        z_text = [[str(x) for x in y] for y in z]
+
+        # set up figure 
+        fig_3 = ff.create_annotated_heatmap(z, y=y, x=x, annotation_text=z_text, colorscale='Viridis')
+
+        # add title
+        fig_3.update_layout(title_text='<i><b>Confusion matrix on The Test Data</b></i>',
+                  #xaxis = dict(title='x'),
+                  #yaxis = dict(title='x')
+                 )
+
+        # add custom xaxis title
+        fig_3.add_annotation(dict(font=dict(color="black",size=14),
+                        x=0.5,
+                        y=-0.15,
+                        showarrow=False,
+                        text="Predicted value",
+                        xref="paper",
+                        yref="paper"))
+
+        # add custom yaxis title
+        fig_3.add_annotation(dict(font=dict(color="black",size=14),
+                        x=-0.35,
+                        y=0.5,
+                        showarrow=False,
+                        text="Real value",
+                        textangle=-90,
+                        xref="paper",
+                        yref="paper"))
+
+        # adjust margins to make room for yaxis title
+        fig_3.update_layout(margin=dict(t=50, l=200))
+
+        # add colorbar
+        fig_3['data'][0]['showscale'] = True
+        st.plotly_chart(fig_3)
+
+
 
     elif model_option=="SVM":
-        st.write("SVM yet to be developed")
+
+        classifier_SVM=svm.SVC(kernel=kernel, C=c_reg)
+        classifier_SVM.fit(X_res, y_res)
+
+        y_pred_test=classifier_SVM.predict(X_test)
+        score_test=accuracy_score(y_pred_test, y_test)
+        score_test=str(math.floor(score_test*100))+"%"
+          
+        y_pred_train=classifier_SVM.predict(X_res)
+        score_train=accuracy_score(y_pred_train, y_res)
+        score_train=str(math.floor(score_train*100))+"%"
+
+        st.metric("Accuracy over Training data", score_train)
+        st.metric("Accuracy over Test data", score_test)
+
+        confusion_matrix_4=confusion_matrix(y_test, y_pred_test)
+
+        z = np.flip(confusion_matrix_4,0)
+        x = ['Predict 1', 'Prdict 0']
+        y =  ['True 0', 'True 1']
+
+        # change each element of z to type string for annotations
+        z_text = [[str(x) for x in y] for y in z]
+
+        # set up figure 
+        fig_4 = ff.create_annotated_heatmap(z, y=y, x=x, annotation_text=z_text, colorscale='Viridis')
+
+        # add title
+        fig_4.update_layout(title_text='<i><b>Confusion matrix on The Test Data</b></i>',
+                  #xaxis = dict(title='x'),
+                  #yaxis = dict(title='x')
+                 )
+
+        # add custom xaxis title
+        fig_4.add_annotation(dict(font=dict(color="black",size=14),
+                        x=0.5,
+                        y=-0.15,
+                        showarrow=False,
+                        text="Predicted value",
+                        xref="paper",
+                        yref="paper"))
+
+        # add custom yaxis title
+        fig_4.add_annotation(dict(font=dict(color="black",size=14),
+                        x=-0.35,
+                        y=0.5,
+                        showarrow=False,
+                        text="Real value",
+                        textangle=-90,
+                        xref="paper",
+                        yref="paper"))
+
+        # adjust margins to make room for yaxis title
+        fig_4.update_layout(margin=dict(t=50, l=200))
+
+        # add colorbar
+        fig_4['data'][0]['showscale'] = True
+        st.plotly_chart(fig_4)
+
+
         
     else:
-        st.write("Logistic Regression yet to be developed")
+        classifier_LR=LogisticRegression(solver=solver, max_iter=max_iter)
+        classifier_LR.fit(X_res, y_res)
+        
+
+        y_pred_test=classifier_LR.predict(X_test)
+        score_test=accuracy_score(y_pred_test, y_test)
+        score_test=str(math.floor(score_test*100))+"%"
+          
+        y_pred_train=classifier_LR.predict(X_res)
+        score_train=accuracy_score(y_pred_train, y_res)
+        score_train=str(math.floor(score_train*100))+"%"
+
+        st.metric("Accuracy over Training data", score_train)
+        st.metric("Accuracy over Test data", score_test)
+
+        confusion_matrix_5=confusion_matrix(y_test, y_pred_test)
+
+        z = np.flip(confusion_matrix_5,0)
+        x = ['Predict 1', 'Prdict 0']
+        y =  ['True 0', 'True 1']
+
+        # change each element of z to type string for annotations
+        z_text = [[str(x) for x in y] for y in z]
+
+        # set up figure 
+        fig_5 = ff.create_annotated_heatmap(z, y=y, x=x, annotation_text=z_text, colorscale='Viridis')
+
+        # add title
+        fig_5.update_layout(title_text='<i><b>Confusion matrix on The Test Data</b></i>',
+                  #xaxis = dict(title='x'),
+                  #yaxis = dict(title='x')
+                 )
+
+        # add custom xaxis title
+        fig_5.add_annotation(dict(font=dict(color="black",size=14),
+                        x=0.5,
+                        y=-0.15,
+                        showarrow=False,
+                        text="Predicted value",
+                        xref="paper",
+                        yref="paper"))
+
+        # add custom yaxis title
+        fig_5.add_annotation(dict(font=dict(color="black",size=14),
+                        x=-0.35,
+                        y=0.5,
+                        showarrow=False,
+                        text="Real value",
+                        textangle=-90,
+                        xref="paper",
+                        yref="paper"))
+
+        # adjust margins to make room for yaxis title
+        fig_5.update_layout(margin=dict(t=50, l=200))
+
+        # add colorbar
+        fig_5['data'][0]['showscale'] = True
+        st.plotly_chart(fig_5)
     
     
 
-    
 
+
+"""
+st.write("Based on the trained model, input values below to predict presence or absence of CAD")
+
+def show_pre(x):
+    list_col=cont+cat
+    if x=="T":
+     """   
+
+
+    
 
             
