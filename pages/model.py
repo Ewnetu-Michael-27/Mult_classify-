@@ -607,12 +607,14 @@ if st.session_state["button_model_train"]:
         # add colorbar
         fig_5['data'][0]['showscale'] = True
         st.plotly_chart(fig_5)
+
+        st.write("Based on the trained model, input values below to predict presence or absence of CAD")
     
     
 
 
 
-st.write("Based on the trained model, input values below to predict presence or absence of CAD")
+
 
 if st.session_state["button_main"] and st.session_state["button_sec"] and st.session_state["button_model"] and st.session_state["button_model_select"] and st.session_state["button_model_train"]:
     if st.button("Click to predict from values or to roll back page below"):
