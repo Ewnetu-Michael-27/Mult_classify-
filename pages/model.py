@@ -25,6 +25,11 @@ st.title("Applying Models")
 
 st.markdown(":red[**Warning**], several session states are used in this page to optimize the model selection and prediction. Please see infos above, on, and below the buttons to prevent error")
 st.markdown("if value Is going to be changed, make sure to click on the buttons below it so that the page can be rolled back. Then change the value and click the buttons again to see effect.")
+
+st.text("")
+st.markdown("***")
+st.text("")
+
 ############################## Session states 
 
 if "button_main" not in st.session_state:
