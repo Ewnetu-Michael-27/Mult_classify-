@@ -23,6 +23,8 @@ from sklearn.linear_model import LogisticRegression
 
 st.title("Applying Models")
 
+st.markdown(":red[**Warning**], several session states are used in this page to optimize the model selection and prediction. Please see infos above, on, and below the buttons to prevent error")
+
 ############################## Session states 
 
 if "button_main" not in st.session_state:
