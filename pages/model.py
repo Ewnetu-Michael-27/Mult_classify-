@@ -108,6 +108,7 @@ if st.session_state["button_main"]:
          st.session_state["button_sec"]= not st.session_state["button_sec"]
 
 if st.session_state["button_sec"]:
+    st.write("Data is preprocessed. See the graphs below")
     X_cont=df[cont].to_numpy()
     my_scaler = StandardScaler()
     my_scaler.fit(X_cont)
