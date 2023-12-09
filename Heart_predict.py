@@ -4,12 +4,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
+from imblearn.over_sampling import RandomOverSampler
+import math 
 import altair as alt 
 import plotly.graph_objects as go 
-import PIL
+from PIL import Image
 import plotly.express as px 
+import plotly.figure_factory as ff
 import statsmodels.api as sm
+
 
 st.set_page_config(
     page_title="Prediction of CAD"
@@ -21,6 +25,9 @@ st.write("The dataset that was generated to study discriminant function models f
 
 
 st.sidebar.success("Select a Page Above")
+
+
+
 
 st.text("")
 st.markdown("***")
@@ -63,6 +70,119 @@ with tab3:
     st.dataframe(df_p_val[df_p_val["P_values"]<0.05])
 with st.expander("See explanation"):
     st.write("In the previous page, IDA/EDA showed that 5 features have weak influence on the presence or absence of CAD (Chol, Trestbps, FBS, Restecg, Slope). The P-value analysis flagged those features to have p_value>0.05 ")
+
+st.text("")
+st.markdown("***")
+st.text("")
+
+st.markdown("Additional Preprocessing of Data")
+st.write("Before each model training, Standard Scalar method is used to regularize the data. Then, the imbalnce of the data is fixed.")
+
+
+#Finding continous and categorical variables
+def choose_cont(x, st):
+        list_cont=[]
+        if st=="cont":
+            for i in x:
+                if i in ["age","trestbps","chol","thalach","oldpeak"]:
+                    list_cont.append(i)
+        else:
+            for i in x:
+                if i in ["sex","cp","fbs","restecg","exang","slope","ca","thal"]:
+                    list_cont.append(i)
+
+
+        return list_cont
+
+
+list_features=["age","sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal"]
+cont=choose_cont(list_features, "cont")
+cat=choose_cont(list_features, "cat")
+output=["num"]
+
+
+X_cont=df[cont]
+y=df[output].astype("category").to_numpy()
+
+col=cont+["num"]
+for_fig=pd.DataFrame((np.concatenate((X_cont, y), axis=1)), columns=col)
+x_str=col[0] 
+y_str=col[1]
+
+st.text("")
+st.markdown("***")
+st.text("")
+
+st.write("What the data looks like before the aditional preprocessing of data")
+tab_1, tab_2=st.tabs(["Before Standard Scalr Process", "Before Balancing the Data"])
+
+
+fig_1=alt.Chart(for_fig).mark_circle().encode(
+        x=x_str,
+        y=y_str, 
+        color="num", 
+        tooltip=[x_str, y_str, "num"]
+        ).interactive()
+
+labels=["0 (Absence)", "1 (Presence)"]
+val=np.unique(y, return_counts=True)
+values=[val[1][0], val[1][1]]
+
+fig_2=go.Figure(data=[go.Pie(labels=labels, values=values)])
+
+
+
+with tab_1:
+    st.altair_chart(fig_1, use_container_width=True)
+with tab_2:
+    st.plotly_chart(fig_2)
+
+
+st.text("")
+st.markdown("***")
+st.text("")
+
+st.write("What the data looks like after the aditional preprocessing of data")
+
+X_cont=df[cont].to_numpy()
+my_scaler = StandardScaler()
+my_scaler.fit(X_cont)
+X_cont_sc=my_scaler.transform(X_cont)
+
+X_cat=df[cat].to_numpy()
+X_new=np.hstack((X_cont_sc, X_cat))
+
+X_train,X_test,y_train,y_test = train_test_split(X_new,y,test_size=0.2,random_state=42)
+
+
+samp = {0: len(y_train[y_train == 0]), 1: len(y_train[y_train == 0])}
+sampler=RandomOverSampler(sampling_strategy=samp, random_state=42)
+X_res, y_res=sampler.fit_resample(X_train, y_train)
+
+tab_3, tab_4=st.tabs(["After Standard Scalr Process", "After Balancing the Data by Sampling"])
+
+
+col=cont+["num"]
+for_fig=pd.DataFrame((np.concatenate((X_cont_sc, y), axis=1)), columns=col)
+
+fig_3=alt.Chart(for_fig).mark_circle().encode(
+        x=x_str,
+        y=y_str, 
+        color="num", 
+        tooltip=[x_str, y_str, "num"]
+        ).interactive()
+    
+labels=["0 (Absence)", "1 (Presence)"]
+val=np.unique(y_res, return_counts=True)
+values=[val[1][0], val[1][1]]
+
+fig_4=go.Figure(data=[go.Pie(labels=labels, values=values)])
+
+with tab_3:
+    st.altair_chart(fig_3, use_container_width=True)
+with tab_4:
+    st.plotly_chart(fig_4)
+
 
 
 
