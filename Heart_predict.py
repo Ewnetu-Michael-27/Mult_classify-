@@ -33,6 +33,7 @@ st.text("")
 st.markdown("***")
 st.text("")
 
+st.write("**Brief Feature Analysis**")
 st.markdown('''
 Feature selection is the process of choosing a subset of relevant features from a 
 larger set of features to improve the performance of a model or reduce its complexity. 
@@ -84,7 +85,7 @@ st.text("")
 st.markdown("***")
 st.text("")
 
-st.markdown("Additional Preprocessing of Data")
+st.write("**Additional Preprocessing of Data**")
 st.write("Before each model training, Standard Scalar method is used to regularize the data. Then, the imbalnce of the data is fixed.")
 
 
