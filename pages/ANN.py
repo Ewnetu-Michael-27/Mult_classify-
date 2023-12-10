@@ -39,7 +39,11 @@ st.write("choose number of Epochs below. **500** is recommended")
 no_epoch=st.slider("Insert number of Epoch", 0,2000,500)
 st.write("Your choice of Epoch is ", no_epoch)
 
+st.text("")
+clear_cac=st.button("Click if values above are altered")
 
+if clear_cac:
+    st.cache_data.clear()
 #put network graph 
 
 
@@ -114,11 +118,11 @@ if st.session_state["button_1"]:
     ann_1.compile(optimizer=optimizer_input,loss="binary_crossentropy",metrics=['accuracy'])
 
     @st.cache_data
-    def run_model():
-        ann_1.fit(X_res, y_res,batch_size=32,epochs=no_epoch)
-        return ann_1
+    def run_model(_m,data,out):
+        _m.fit(X_res, y_res,batch_size=32,epochs=no_epoch)
+        return _m
     
-    model=run_model()
+    model=run_model(ann_1,X_res, y_res)
 
     st.text("")
     st.markdown("Model Trained")   
