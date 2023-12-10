@@ -43,6 +43,11 @@ st.write("Choose percentage for Testing data in Train-Test data split")
 portion=st.slider("Choose portion", 0.0,1.0,0.2)
 st.write("Your choice of value is", portion)
 
+st.text("")
+clear_cac=st.button("Click if values above are altered")
+
+if clear_cac:
+    st.cache_data.clear()
 
 st.text("")
 st.markdown("***")
@@ -105,11 +110,11 @@ if st.session_state["button_1"]:
     classifier_SVM=svm.SVC(kernel=kernel, C=c_reg)
 
     @st.cache_data
-    def run_model():
-        classifier_SVM.fit(X_res, y_res)
-        return classifier_SVM
+    def run_model(_m, data, out):
+        _m.fit(data, out)
+        return _m
 
-    model=run_model()
+    model=run_model(classifier_SVM,X_res, y_res)
 
     y_pred_test=model.predict(X_test)
     score_test=accuracy_score(y_pred_test, y_test)
