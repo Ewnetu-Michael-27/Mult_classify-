@@ -33,7 +33,7 @@ st.text("")
 st.markdown("***")
 st.text("")
 
-st.write("**Brief Feature Analysis**")
+st.write("**Breif Feature Analysis**")
 st.markdown('''
 Feature selection is the process of choosing a subset of relevant features from a 
 larger set of features to improve the performance of a model or reduce its complexity. 
