@@ -24,7 +24,7 @@ st.write("Coronary artery disease (CAD) is caused by plaque buildup in the wall 
 st.write("The dataset that was generated to study discriminant function models for estimating probabilities of coronary artery disease from clinical and non-invasive test results of 303 patients from Cleveland Clinic in Cleveland, Ohio. Concretely, the dataset explores the relationship between 13 clinical and non-invasive tests and the presence of CAD for the goal of building a prediction model.")
 
 
-st.sidebar.success("Select a Page Above")
+st.sidebar.success("Select from the options of 7 Pages")
 
 
 
