@@ -31,6 +31,15 @@ st.sidebar.success("Select from the options of 7 Pages")
 
 st.text("")
 st.markdown("***")
+st.text("")
+
+st.markdown('''
+Feature selection is the process of choosing a subset of relevant features from a 
+larger set of features to improve the performance of a model or reduce its complexity. 
+Even though it has limitations, p-value analysis can be quickly used to study the feature's importance in the predictive model. 
+''')
+
+st.text("")
 
 st.write("Below, P-values for each feature are shown. The points are red for those feature with P-value >0.05 (**See explanation below image**)")
 
