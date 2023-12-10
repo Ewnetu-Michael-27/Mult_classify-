@@ -195,7 +195,9 @@ with tab_4:
 
 
 
-
+st.text("")
+st.text("")
+st.write("Now ready to check models use the prediction functionalities. Please go ahead to the sidebar.")
 
 
 
