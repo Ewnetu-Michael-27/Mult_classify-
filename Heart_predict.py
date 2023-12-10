@@ -79,7 +79,7 @@ with tab2:
 with tab3:
     st.dataframe(df_p_val[df_p_val["P_values"]<0.05])
 with st.expander("See explanation"):
-    st.write("In the previous page, IDA/EDA showed that 5 features have weak influence on the presence or absence of CAD (Chol, Trestbps, FBS, Restecg, Slope). The P-value analysis flagged those features to have p_value>0.05 ")
+    st.write("IDA/EDA process performed [here](https://exploring-prediction-of-cad.streamlit.app/) showed that 5 features have weak influence on the presence or absence of CAD (Chol, Trestbps, FBS, Restecg, Slope). The P-value analysis flagged those features to have p_value>0.05 ")
 
 st.text("")
 st.markdown("***")
