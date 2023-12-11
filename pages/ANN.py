@@ -19,6 +19,8 @@ import graphviz as graph
 
 st.title("Training Artificial Neural Network and Predicting CAD")
 
+st.write("check")
+
 
 if "button_1_Ann" not in st.session_state:
     st.session_state["button_1_Ann"]=False
