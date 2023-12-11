@@ -14,6 +14,7 @@ from PIL import Image
 import plotly.express as px 
 from sklearn.metrics import confusion_matrix
 import plotly.figure_factory as ff
+import graphviz as graph
 
 
 st.title("Training Artificial Neural Network and Predicting CAD")
@@ -41,10 +42,60 @@ no_epoch=st.slider("Insert number of Epoch", 0,2000,500)
 st.write("Your choice of Epoch is ", no_epoch)
 
 st.text("")
-clear_cac=st.button("Click if values above are altered")
+st.markdown("***")
+st.text("")
+st.write("Building the Structure of the Neural Network")
+st.text("")
+number_hidden_layer=st.selectbox("How many hidden layers do you want?",
+                                 (1,2,3,4,5,6,7,8,9,10))
+st.text("")
+num_neurons=np.zeros(number_hidden_layer)
+for i in range(number_hidden_layer):
+    num_neurons[i]=st.slider('In hidden layer '+str(i+1)+', how many neurons you want?', 1,25,6)
+num_neurons=num_neurons.astype(int) 
+
+#adding the input and output neurons to the num_neurons
+num_neurons=np.append(np.array([1]),num_neurons)
+num_neurons=np.append(num_neurons,np.array([1]))
+
+
+grapher=graph.Digraph(comment='Neural Network', 
+                    graph_attr={'nodesep':'0.04', 'ranksep':'0.05', 'bgcolor':'white', 'splines':'line', 'rankdir':'LR', 'fontname':'Hilda 10'},
+                    node_attr={'fixedsize':'true', 'label':"", 'style':'filled', 'color':'none', 'fillcolor':'gray', 'shape':'circle', 'penwidth':'10', 'width':'0.4', 'height':'0.4'},
+                    edge_attr={'color':'black1', 'arrowsize':'.4','penwidth':'0.4'})
+
+for layer_no in range(len(num_neurons)):
+    with grapher.subgraph(name='cluster_'+str(layer_no)) as c:
+        c.attr(color='transparent') # comment this if graph background is needed
+        if layer_no == 0:                 # first layer
+            c.attr(label='Input Layer')
+        elif layer_no == len(num_neurons)-1:   # last layer
+            c.attr(label='Output Layer')
+        else:                      # layers in between
+            c.attr(label=' Hidden Layer '+ str(layer_no))
+        for a in range(num_neurons[layer_no]):
+            if layer_no == 0: # or i == len(layers)-1: # first or last layer
+                c.node('l'+str(layer_no)+str(a), 'I', fontcolor='white', fillcolor='navyblue')#, fontcolor='white'
+            elif layer_no == len(num_neurons)-1:
+                c.node('l'+str(layer_no)+str(a), 'O', fontcolor='white', fillcolor='violetred')#, fontcolor='white'
+            else:
+                c.node('l'+str(layer_no)+str(a), 'H'+str(layer_no), fontsize='12', fillcolor='green') # to place "sigma" inside the nodes of a layer
+
+con="DENSE"
+for layer_no in range(len(num_neurons)-1):
+    for node_no in range(num_neurons[layer_no]):
+        if con == "DENSE":
+            for b in range(num_neurons[layer_no+1]):
+                grapher.edge('l'+str(layer_no)+str(node_no), 'l'+str(layer_no+1)+str(b),)
+st.graphviz_chart(grapher)
+st.write("Code for visualizing graph was adapted from [Mahyar Abedi](https://github.com/mahyarabedi93)")
+
+
+clear_cac=st.button("**Click if values above are altered**")
 
 if clear_cac:
     st.cache_data.clear()
+
 #put network graph 
 
 
@@ -62,6 +113,12 @@ list_features=st.multiselect("Pick Features",
                              ["age","sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal"],
                              ["age","sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal"]
                              )
+
+st.text("")
+st.text("")
+st.write("Based on the parameters and structures provided above, a model will be built")
+st.text("")
+st.text("")
 
 
 if st.button("Click to Train ANN model"):
@@ -110,13 +167,26 @@ if st.session_state["button_1_Ann"]:
     X_res, y_res=sampler.fit_resample(X_train, y_train)
 
 
+    ann_1=tf.keras.Sequential()
 
-    ann_1=tf.keras.models.Sequential(
-                [tf.keras.layers.Dense(units=6, activation="relu", input_dim=len(X_res[1,:])),
-                tf.keras.layers.Dense(units=6, activation="relu"),
-                tf.keras.layers.Dense(units=1, activation="sigmoid")])
+    #first hidden layer
+    ann_1.add(tf.keras.layers.Dense(units=num_neurons[1], activation="relu", input_dim=len(X_res[1,:])))
+
+    #for hidden layer
+    for i in range(2,len(num_neurons)-1,1):
+        ann_1.add(tf.keras.layers.Dense(units=num_neurons[i], activation="relu"))
+
+    #for the final layer
+    ann_1.add(tf.keras.layers.Dense(units=1, activation="sigmoid"))
+
+    #ann_1=tf.keras.models.Sequential(
+     #           [tf.keras.layers.Dense(units=6, activation="relu", input_dim=len(X_res[1,:])),
+      #          tf.keras.layers.Dense(units=6, activation="relu"),
+       #         tf.keras.layers.Dense(units=1, activation="sigmoid")])
 
     ann_1.compile(optimizer=optimizer_input,loss="binary_crossentropy",metrics=['accuracy'])
+
+    #st.write("summary",ann_1.summary())
 
     @st.cache_data
     def run_model(_m,data,out):
@@ -362,7 +432,6 @@ if st.session_state["button_pre_Ann"]:
 
 
             
-
 
 
 
