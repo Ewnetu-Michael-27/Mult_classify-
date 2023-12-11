@@ -20,11 +20,11 @@ st.title("Training KNN Model and Predicting CAD")
 image=Image.open("KNN.png")
 st.image(image)
 
-if "button_1" not in st.session_state:
-    st.session_state["button_1"]=False
+if "button_1_KNN" not in st.session_state:
+    st.session_state["button_1_KNN"]=False
 
-if "button_pre" not in st.session_state:
-    st.session_state["button_pre"]=False
+if "button_pre_KNN" not in st.session_state:
+    st.session_state["button_pre_KNN"]=False
 
 df=pd.read_csv("df_heart_clean_2.csv")
 
@@ -65,8 +65,8 @@ list_features=st.multiselect("Pick Features",
                              )
 
 
-if st.button("Click to Train model"):
-    st.session_state["button_1"]= not st.session_state["button_1"]
+if st.button("Click to Train The KNN model"):
+    st.session_state["button_1_KNN"]= not st.session_state["button_1_KNN"]
 
 st.text("")
 st.markdown("***")
@@ -185,12 +185,12 @@ if st.session_state["button_1"]:
 
 
 
-if st.session_state["button_1"]:
-    if st.button("Click to Predict cad from input values"):
-        st.session_state["button_pre"]=not st.session_state["button_pre"]
+if st.session_state["button_1_KNN"]:
+    if st.button("Click to use the KNN model and Predict values"):
+        st.session_state["button_pre_KNN"]=not st.session_state["button_pre_KNN"]
 
 
-if st.session_state["button_pre"]:
+if st.session_state["button_pre_KNN"]:
     st.write("Input values below. **Make sure to only insert values for the features selected above**. If the particular feature is not selected, just leave it")
 
     
