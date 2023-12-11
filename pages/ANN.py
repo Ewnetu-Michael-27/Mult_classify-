@@ -18,11 +18,11 @@ import plotly.figure_factory as ff
 
 st.title("Training Artificial Neural Network and Predicting CAD")
 
-if "button_1" not in st.session_state:
-    st.session_state["button_1"]=False
+if "button_1_Ann" not in st.session_state:
+    st.session_state["button_1_Ann"]=False
 
-if "button_pre" not in st.session_state:
-    st.session_state["button_pre"]=False
+if "button_pre_Ann" not in st.session_state:
+    st.session_state["button_pre_Ann"]=False
 
 
 df=pd.read_csv("df_heart_clean_2.csv")
@@ -63,14 +63,14 @@ list_features=st.multiselect("Pick Features",
                              )
 
 
-if st.button("Click to Train model"):
-    st.session_state["button_1"]= not st.session_state["button_1"]
+if st.button("Click to Train ANN model"):
+    st.session_state["button_1_Ann"]= not st.session_state["button_1_Ann"]
 
 st.text("")
 st.markdown("***")
 st.text("")
 
-if st.session_state["button_1"]:
+if st.session_state["button_1_Ann"]:
     st.markdown(''':red[TRAINING MODEL WAIT....!]''')
     def choose_cont(x, st):
         list_cont=[]
@@ -191,13 +191,13 @@ if st.session_state["button_1"]:
     st.plotly_chart(fig_5)
 
 
-if st.session_state["button_1"]:
-    if st.button("Click to Predict cad from input values"):
-        st.session_state["button_pre"]=not st.session_state["button_pre"]
+if st.session_state["button_1_Ann"]:
+    if st.button("Click to use the ANN model and Predict values"):
+        st.session_state["button_pre_Ann"]=not st.session_state["button_pre_Ann"]
 
 
 
-if st.session_state["button_pre"]:
+if st.session_state["button_pre_Ann"]:
     st.write("Input values below. **Make sure to only insert values for the features selected above**. If the particular feature is not selected, just leave it")
 
     
