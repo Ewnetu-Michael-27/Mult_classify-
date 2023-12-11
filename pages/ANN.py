@@ -295,22 +295,42 @@ if st.session_state["button_pre"]:
     st.write("The selected thal value is ",thal)
     dict_val["thal"]=thal           
 
-
+    
     st.text("")
     st.write("Summary of selected values")
     st.write(dict_val)
-
-    p_values=[(list(dict_val))]
-
-    def predict_output(model, list_v, classifier):
-        list_v=np.array(list_v)
-        if classifier=="ANN":
-            p_a=model.predict(list_v)[0][0]
-            return "CAD is Present" if p_a>0.5 else "CAD Is Absent"
-        else:
-            return model.predict(list_v)[0]
+        
         
     button_pre=st.button("Click to Predict")
-
     if button_pre:
-        st.write("Checking")
+        #transform the continous values from the inputs 
+        cont_predict=[]
+
+        for i in list(dict_val):
+            if i in cont:
+                cont_predict.append(dict_val[i])
+
+        #time to transfrom 
+        cont_predict_sc=my_scaler.transform([cont_predict])
+
+        #adding the categorical valriables
+
+        for i in list(dict_val):
+            if i in cat:
+                val=dict_val[i]
+                cont_predict_sc=np.append(cont_predict_sc, [val])
+        
+        #time for prediction
+        p_a=model.predict(cont_predict_sc.reshape((1,13)))[0][0]
+        st.metric("Probability of CAD Presence", p_a)
+        if p_a>0.5:
+            st.write("**CAD is present**")
+            st.write("Please consult your primary care physician. Click [here](https://www.cdc.gov/heartdisease/coronary_ad.htm) to read more!")
+        else:
+            st.write("**CAD Is Absent.**")
+            st.write("You are safe. However, please read [here](https://www.cdc.gov/heartdisease/coronary_ad.htm) more to increase awarness.")
+            
+
+
+
+
