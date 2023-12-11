@@ -17,6 +17,7 @@ import plotly.figure_factory as ff
 
 
 st.title("Training Artificial Neural Network and Predicting CAD")
+st.write("Check")
 
 if "button_1_Ann" not in st.session_state:
     st.session_state["button_1_Ann"]=False
