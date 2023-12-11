@@ -72,7 +72,7 @@ st.text("")
 st.markdown("***")
 st.text("")
 
-if st.session_state["button_1"]:
+if st.session_state["button_1_KNN"]:
     st.markdown(''':red[TRAINING MODEL WAIT....!]''')
     def choose_cont(x, st):
         list_cont=[]
