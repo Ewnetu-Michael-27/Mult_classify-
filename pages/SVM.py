@@ -329,7 +329,7 @@ if st.session_state["button_pre"]:
                 cont_predict_sc=np.append(cont_predict_sc, [val])
         
         #time for prediction
-        p_a=model.predict(cont_predict_sc.reshape((1,13)))[0][0]
+        p_a=model.predict(cont_predict_sc.reshape((1,len(cont_predict_sc))))[0][0]
         st.metric("Probability of CAD Presence", p_a)
         if p_a>0.5:
             st.write("**CAD is present**")
