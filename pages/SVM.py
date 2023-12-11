@@ -18,11 +18,11 @@ import plotly.figure_factory as ff
 
 st.title("Training an SVM model and predicting CAD")
 
-if "button_1" not in st.session_state:
-    st.session_state["button_1"]=False
+if "button_1_SVM" not in st.session_state:
+    st.session_state["button_1_SVM"]=False
 
-if "button_pre" not in st.session_state:
-    st.session_state["button_pre"]=False
+if "button_pre_SVM" not in st.session_state:
+    st.session_state["button_pre_SVM"]=False
 
 
 image=Image.open("SVM.png")
@@ -62,14 +62,14 @@ list_features=st.multiselect("Pick Features",
                              )
 
 
-if st.button("Click to Train model"):
-    st.session_state["button_1"]= not st.session_state["button_1"]
+if st.button("Click to Train The SVM model"):
+    st.session_state["button_1_SVM"]= not st.session_state["button_1_SVM"]
 
 st.text("")
 st.markdown("***")
 st.text("")
 
-if st.session_state["button_1"]:
+if st.session_state["button_1_SVM"]:
     st.markdown(''':red[TRAINING MODEL WAIT....!]''')
     def choose_cont(x, st):
         list_cont=[]
@@ -181,11 +181,11 @@ if st.session_state["button_1"]:
 
     
 
-if st.session_state["button_1"]:
+if st.session_state["button_1_SVM"]:
     if st.button("Click to Predict cad from input values"):
-        st.session_state["button_pre"]=not st.session_state["button_pre"]
+        st.session_state["button_pre_SVM"]=not st.session_state["button_pre_SVM"]
 
-if st.session_state["button_pre"]:
+if st.session_state["button_pre_SVM"]:
     st.write("Input values below. **Make sure to only insert values for the features selected above**. If the particular feature is not selected, just leave it")
 
     
