@@ -15,12 +15,12 @@ from sklearn.metrics import confusion_matrix
 import plotly.figure_factory as ff
 from sklearn.linear_model import LogisticRegression 
 
-if "button_1" not in st.session_state:
-    st.session_state["button_1"]=False
+if "button_1_LR" not in st.session_state:
+    st.session_state["button_1_LR"]=False
 
 
-if "button_pre" not in st.session_state:
-    st.session_state["button_pre"]=False
+if "button_pre_LR" not in st.session_state:
+    st.session_state["button_pre_LR"]=False
 
 
 st.title("Training a Logistic Regression Model and Predicting CAD")
@@ -69,11 +69,11 @@ st.text("")
 st.markdown("***")
 st.text("")
 
-if st.button("Click to Train model"):
-    st.session_state["button_1"]= not st.session_state["button_1"]
+if st.button("Click to Train LR model"):
+    st.session_state["button_1_LR"]= not st.session_state["button_1_LR"]
 
 
-if st.session_state["button_1"]:
+if st.session_state["button_1_LR"]:
     st.markdown(''':red[TRAINING MODEL WAIT....!]''')
     def choose_cont(x, st):
         list_cont=[]
@@ -187,11 +187,11 @@ if st.session_state["button_1"]:
     st.plotly_chart(fig_5)
 
 
-if st.session_state["button_1"]:
-    if st.button("Click to Predict cad from input values"):
-        st.session_state["button_pre"]=not st.session_state["button_pre"]
+if st.session_state["button_1_LR"]:
+    if st.button("Click to use the LR model and Predict values"):
+        st.session_state["button_pre_LR"]=not st.session_state["button_pre_LR"]
 
-if st.session_state["button_pre"]:
+if st.session_state["button_pre_LR"]:
     st.write("Input values below. **Make sure to only insert values for the features selected above**. If the particular feature is not selected, just leave it")
 
     
