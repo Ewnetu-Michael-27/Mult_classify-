@@ -45,7 +45,7 @@ st.write("Your choice of Epoch is ", no_epoch)
 st.text("")
 st.markdown("***")
 st.text("")
-st.write("Building the Structure of the Neural Network")
+st.write("**Building the Structure of the Neural Network that will be used for training**")
 st.text("")
 number_hidden_layer=st.selectbox("How many hidden layers do you want?",
                                  (1,2,3,4,5,6,7,8,9,10))
@@ -89,8 +89,10 @@ for layer_no in range(len(num_neurons)-1):
             for b in range(num_neurons[layer_no+1]):
                 grapher.edge('l'+str(layer_no)+str(node_no), 'l'+str(layer_no+1)+str(b),)
 st.graphviz_chart(grapher)
+
 st.write("Code for visualizing graph was adapted from [Mahyar Abedi](https://github.com/mahyarabedi93)")
 
+st.text("")
 
 clear_cac=st.button("**Click if values above are altered**")
 
@@ -117,7 +119,7 @@ list_features=st.multiselect("Pick Features",
 
 st.text("")
 st.text("")
-st.write("Based on the parameters and structures provided above, a model will be built")
+st.write("**Based on the parameters, structures, and data provided above, a model will be built**")
 st.text("")
 st.text("")
 
