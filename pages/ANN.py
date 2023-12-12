@@ -358,7 +358,7 @@ if st.session_state["button_pre_Ann"]:
 
     if "oldpeak" in list_features:
         st.write("Input value for oldpeak. ST Depression induced by excercise relative to rest")
-        oldpeak=st.slider("Input Thala,ch", 0.0,9.0,1.5)
+        oldpeak=st.slider("Input oldpeak", 0.0,9.0,1.5)
         st.write("The selected oldpeak value is ",oldpeak)
         dict_val["oldpeak"]=oldpeak
 
