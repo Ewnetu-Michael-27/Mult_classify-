@@ -397,32 +397,35 @@ if st.session_state["button_pre_Ann"]:
         
     button_pre=st.button("Click to Predict")
     if button_pre:
-        #transform the continous values from the inputs 
-        cont_predict=[]
-
-        for i in list(dict_val):
-            if i in cont:
-                cont_predict.append(dict_val[i])
-
-        #time to transfrom 
-        cont_predict_sc=my_scaler.transform([cont_predict])
-
-        #adding the categorical valriables
-
-        for i in list(dict_val):
-            if i in cat:
-                val=dict_val[i]
-                cont_predict_sc=np.append(cont_predict_sc, [val])
-        
-        #time for prediction
-        p_a=model.predict(cont_predict_sc.reshape((1,len(cont_predict_sc))))[0][0]
-        st.metric("Probability of CAD Presence", p_a)
-        if p_a>0.5:
-            st.write("**CAD is present**")
-            st.write("Please consult your primary care physician. Click [here](https://www.cdc.gov/heartdisease/coronary_ad.htm) to read more!")
+        if st.session_state["button_1_Ann"]:
+            #transform the continous values from the inputs 
+            cont_predict=[]
+    
+            for i in list(dict_val):
+                if i in cont:
+                    cont_predict.append(dict_val[i])
+    
+            #time to transfrom 
+            cont_predict_sc=my_scaler.transform([cont_predict])
+    
+            #adding the categorical valriables
+    
+            for i in list(dict_val):
+                if i in cat:
+                    val=dict_val[i]
+                    cont_predict_sc=np.append(cont_predict_sc, [val])
+            
+            #time for prediction
+            p_a=model.predict(cont_predict_sc.reshape((1,len(cont_predict_sc))))[0][0]
+            st.metric("Probability of CAD Presence", p_a)
+            if p_a>0.5:
+                st.write("**CAD is present**")
+                st.write("Please consult your primary care physician. Click [here](https://www.cdc.gov/heartdisease/coronary_ad.htm) to read more!")
+            else:
+                st.write("**CAD Is Absent.**")
+                st.write("You are safe. However, please read [here](https://www.cdc.gov/heartdisease/coronary_ad.htm) more to increase awarness.")
         else:
-            st.write("**CAD Is Absent.**")
-            st.write("You are safe. However, please read [here](https://www.cdc.gov/heartdisease/coronary_ad.htm) more to increase awarness.")
+            st.write("Make sure to run the training model.")
             
 
 
