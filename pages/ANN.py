@@ -425,7 +425,7 @@ if st.session_state["button_pre_Ann"]:
                 st.write("**CAD Is Absent.**")
                 st.write("You are safe. However, please read [here](https://www.cdc.gov/heartdisease/coronary_ad.htm) more to increase awarness.")
         else:
-            st.write("Make sure to run the training model.")
+            st.write("**The Training model is not available. Make sure to run it first in the above section.**")
             
 
 
